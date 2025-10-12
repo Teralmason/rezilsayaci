@@ -1,8 +1,0 @@
-{
-  "users": {
-    "mehmet": {"name":"Mehmet","total":0,"byDate":{}},
-    "batu": {"name":"Batu","total":0,"byDate":{}},
-    "abdü": {"name":"Abdü","total":0,"byDate":{}},
-    "kemal": {"name":"Kemal","total":0,"byDate":{}}
-  }
-}
