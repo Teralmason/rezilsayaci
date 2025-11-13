@@ -18,222 +18,264 @@
       z-index: 1000;
       padding: 10px;
     }
-    #lightbox img {
+    #lightbox img, #lightbox video {
       max-width: 100%;
       max-height: 90%;
       border-radius: 10px;
     }
+
+    /* Emoji düşme efekti */
+    .emoji {
+      position: fixed;
+      font-size: 2rem;
+      pointer-events: none;
+      z-index: 500;
+      animation: fall linear;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-50px) rotate(0deg);}
+      100% { transform: translateY(100vh) rotate(360deg);}
+    }
   </style>
 </head>
-<body class="bg-gradient-to-br from-red-100 via-pink-100 to-purple-200 min-h-screen text-gray-800">
-  <div class="max-w-4xl mx-auto p-4">
-    <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-pink-500 to-red-500 text-white py-3 rounded-2xl shadow-lg">
-      Rezil Sayacı
-    </h1>
+<body class="bg-gradient-to-br from-red-100 via-pink-100 to-purple-200 min-h-screen text-gray-800 overflow-x-hidden">
 
-    <!-- Liderlik Tablosu -->
-    <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
-      <h2 class="text-2xl font-semibold mb-3 text-center text-pink-600">🏆 En Reziller 🏆</h2>
-      <ul id="liderlikListesi" class="space-y-2 text-lg font-medium text-gray-700 text-center"></ul>
+<div class="max-w-4xl mx-auto p-4">
+  <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-pink-500 to-red-500 text-white py-3 rounded-2xl shadow-lg">
+    Rezil Sayacı
+  </h1>
+
+  <!-- Liderlik Tablosu -->
+  <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
+    <h2 class="text-2xl font-semibold mb-3 text-center text-pink-600">🏆 En Reziller 🏆</h2>
+    <ul id="liderlikListesi" class="space-y-2 text-lg font-medium text-gray-700 text-center"></ul>
+  </div>
+
+  <!-- Rezillik Ekle -->
+  <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
+    <h2 class="text-xl font-semibold mb-3">Yeni Rezillik Ekle</h2>
+    <form id="rezilForm" class="space-y-3">
+      <select id="kisi" required class="w-full p-3 border rounded-lg">
+        <option value="">Lavuk Seç</option>
+        <option value="Mehmet">Mehmet</option>
+        <option value="Batu">Batu</option>
+        <option value="Abdü">Abdü</option>
+        <option value="Kemal">Kemal</option>
+      </select>
+      <textarea id="aciklama" placeholder="napmış yine amk malı nfwınwnıfvwfk" required class="w-full p-3 border rounded-lg" rows="3"></textarea>
+      <input id="tarih" type="date" required class="w-full p-3 border rounded-lg"/>
+      <button class="w-full py-3 bg-gradient-to-r from-pink-600 to-red-600 text-white rounded-lg hover:from-pink-700 hover:to-red-700">
+        Ekle
+      </button>
+    </form>
+    <button id="tumunuSil" class="mt-4 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Tümünü Sil 🧹</button>
+  </div>
+
+  <!-- Rezillik Listeleri -->
+  <div class="space-y-6">
+    <div class="bg-white rounded-2xl shadow-lg p-5">
+      <h2 class="text-xl font-semibold mb-3 text-pink-600">Mehmet'in Rezillikleri</h2>
+      <ul id="liste-Mehmet" class="space-y-2"></ul>
     </div>
-
-    <!-- Rezillik Ekle -->
-    <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
-      <h2 class="text-xl font-semibold mb-3">Yeni Rezillik Ekle</h2>
-      <form id="rezilForm" class="space-y-3">
-        <select id="kisi" required class="w-full p-3 border rounded-lg">
-          <option value="">Lavuk Seç</option>
-          <option value="Mehmet">Mehmet</option>
-          <option value="Batu">Batu</option>
-          <option value="Abdü">Abdü</option>
-          <option value="Kemal">Kemal</option>
-        </select>
-        <textarea id="aciklama" placeholder="napmış yine amk malı nfwınwnıfvwfk" required class="w-full p-3 border rounded-lg" rows="3"></textarea>
-        <input id="tarih" type="date" required class="w-full p-3 border rounded-lg"/>
-        <button class="w-full py-3 bg-gradient-to-r from-pink-600 to-red-600 text-white rounded-lg hover:from-pink-700 hover:to-red-700">
-          Ekle
-        </button>
-      </form>
-      <button id="tumunuSil" class="mt-4 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Tümünü Sil 🧹</button>
+    <div class="bg-white rounded-2xl shadow-lg p-5">
+      <h2 class="text-xl font-semibold mb-3 text-pink-600">Batu'nun Rezillikleri</h2>
+      <ul id="liste-Batu" class="space-y-2"></ul>
     </div>
-
-    <!-- Rezillik Listeleri -->
-    <div class="space-y-6">
-      <div class="bg-white rounded-2xl shadow-lg p-5">
-        <h2 class="text-xl font-semibold mb-3 text-pink-600">Mehmet'in Rezillikleri</h2>
-        <ul id="liste-Mehmet" class="space-y-2"></ul>
-      </div>
-      <div class="bg-white rounded-2xl shadow-lg p-5">
-        <h2 class="text-xl font-semibold mb-3 text-pink-600">Batu'nun Rezillikleri</h2>
-        <ul id="liste-Batu" class="space-y-2"></ul>
-      </div>
-      <div class="bg-white rounded-2xl shadow-lg p-5">
-        <h2 class="text-xl font-semibold mb-3 text-pink-600">Abdü'nün Rezillikleri</h2>
-        <ul id="liste-Abdü" class="space-y-2"></ul>
-      </div>
-      <div class="bg-white rounded-2xl shadow-lg p-5">
-        <h2 class="text-xl font-semibold mb-3 text-pink-600">Kemal'in Rezillikleri</h2>
-        <ul id="liste-Kemal" class="space-y-2"></ul>
-      </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5">
+      <h2 class="text-xl font-semibold mb-3 text-pink-600">Abdü'nün Rezillikleri</h2>
+      <ul id="liste-Abdü" class="space-y-2"></ul>
     </div>
-
-    <!-- Unutulmaz Anlar Bölümü -->
-    <div class="bg-white rounded-2xl shadow-lg p-5 mt-6">
-      <h2 class="text-xl font-semibold mb-3 text-pink-600">✨ Unutulmaz Anlar ✨</h2>
-
-      <!-- Form -->
-      <form id="unutulmazForm" class="space-y-3 mb-4">
-        <textarea id="unutulmazText" placeholder="ne olmus olabilir ag" class="w-full p-3 border rounded-lg" rows="3"></textarea>
-        <input id="unutulmazFoto" type="file" accept="image/*" class="w-full p-3 border rounded-lg"/>
-        <input id="unutulmazTarih" type="date" required class="w-full p-3 border rounded-lg"/>
-        <button class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700">
-          Ekle
-        </button>
-      </form>
-
-      <!-- Unutulmaz Anlar Görüntüleme -->
-      <div id="unutulmazGoster" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    <div class="bg-white rounded-2xl shadow-lg p-5">
+      <h2 class="text-xl font-semibold mb-3 text-pink-600">Kemal'in Rezillikleri</h2>
+      <ul id="liste-Kemal" class="space-y-2"></ul>
     </div>
   </div>
 
-  <!-- Lightbox -->
-  <div id="lightbox" class="flex" onclick="this.style.display='none'">
-    <img id="lightboxImg" src=""/>
+  <!-- Unutulmaz Anlar Bölümü -->
+  <div class="bg-white rounded-2xl shadow-lg p-5 mt-6">
+    <h2 class="text-xl font-semibold mb-3 text-pink-600">✨ Unutulmaz Anlar ✨</h2>
+
+    <!-- Form -->
+    <form id="unutulmazForm" class="space-y-3 mb-4">
+      <textarea id="unutulmazText" placeholder="ne olmus olabilir ag" class="w-full p-3 border rounded-lg" rows="3"></textarea>
+      <input id="unutulmazMedya" type="file" accept="image/*,video/*" class="w-full p-3 border rounded-lg"/>
+      <input id="unutulmazTarih" type="date" required class="w-full p-3 border rounded-lg"/>
+      <button class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700">
+        Ekle
+      </button>
+    </form>
+
+    <!-- Unutulmaz Anlar Görüntüleme -->
+    <div id="unutulmazGoster" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
   </div>
+</div>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-    import { getDatabase, ref, push, get, child, remove } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+<!-- Lightbox -->
+<div id="lightbox" class="flex" onclick="this.style.display='none'"></div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCmwFZJM8dD_WPXdkabpHAYzi-MxlCGtRY",
-      authDomain: "rezilsayaci.firebaseapp.com",
-      databaseURL: "https://rezilsayaci-default-rtdb.firebaseio.com",
-      projectId: "rezilsayaci",
-      storageBucket: "rezilsayaci.firebasestorage.app",
-      messagingSenderId: "1038280644933",
-      appId: "1:1038280644933:web:d22de5e9f028d84817c62c",
-      measurementId: "G-JL1YHGTPZN"
-    };
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getDatabase, ref, push, get, child, remove } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmwFZJM8dD_WPXdkabpHAYzi-MxlCGtRY",
+    authDomain: "rezilsayaci.firebaseapp.com",
+    databaseURL: "https://rezilsayaci-default-rtdb.firebaseio.com",
+    projectId: "rezilsayaci",
+    storageBucket: "rezilsayaci.firebasestorage.app",
+    messagingSenderId: "1038280644933",
+    appId: "1:1038280644933:web:d22de5e9f028d84817c62c",
+    measurementId: "G-JL1YHGTPZN"
+  };
 
-    // --- Rezillik Fonksiyonları ---
-    document.getElementById('rezilForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const kisi = document.getElementById('kisi').value;
-      const aciklama = document.getElementById('aciklama').value.trim();
-      const tarih = document.getElementById('tarih').value;
-      if (!kisi || !aciklama || !tarih) return;
-      await push(ref(db, 'rezillikler'), { kisi, aciklama, tarih });
-      document.getElementById('rezilForm').reset();
-      loadData();
-    });
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-    async function loadData() {
-      const snapshot = await get(child(ref(db), 'rezillikler'));
-      const veriler = snapshot.exists() ? snapshot.val() : {};
-      ['Mehmet','Batu','Abdü','Kemal'].forEach(kisi => {
-        document.getElementById(`liste-${kisi}`).innerHTML = '';
-      });
-      const sayac = { Mehmet: 0, Batu: 0, Abdü: 0, Kemal: 0 };
-      const entries = Object.entries(veriler).sort((a,b) => b[1].tarih.localeCompare(a[1].tarih));
-      entries.forEach(([key, item]) => {
-        const li = document.createElement('li');
-        li.className = "p-3 bg-pink-50 rounded-lg flex justify-between items-start shadow";
-        li.innerHTML = `
-          <div>
-            <div class="font-semibold">${item.aciklama}</div>
-            <div class="text-sm text-gray-500">${item.tarih}</div>
-          </div>
-          <button class="text-red-500 hover:text-red-700 font-bold">X</button>
-        `;
-        li.querySelector('button').addEventListener('click', async () => {
-          await remove(ref(db, `rezillikler/${key}`));
-          loadData();
-        });
-        document.getElementById(`liste-${item.kisi}`).appendChild(li);
-        sayac[item.kisi]++;
-      });
-      const sirali = Object.entries(sayac).sort((a,b)=>b[1]-a[1]);
-      const liderlikUl = document.getElementById('liderlikListesi');
-      liderlikUl.innerHTML = '';
-      sirali.forEach(([kisi, sayi])=>{
-        const li = document.createElement('li');
-        li.textContent = `${kisi}: ${sayi} rezillik 😎`;
-        liderlikUl.appendChild(li);
-      });
-    }
+  // --- Tarih formatlama ---
+  function formatTarih(dateStr){
+    const date = new Date(dateStr);
+    const options = { weekday:'long', year:'numeric', month:'long', day:'numeric'};
+    return `${dateStr} ${date.toLocaleDateString('tr-TR',options)}`;
+  }
 
-    document.getElementById('tumunuSil').addEventListener('click', async () => {
-      if (!confirm('Tüm rezillikler silinsin mi?')) return;
-      await remove(ref(db, 'rezillikler'));
-      loadData();
-    });
-
+  // --- Rezillik Fonksiyonları ---
+  document.getElementById('rezilForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const kisi = document.getElementById('kisi').value;
+    const aciklama = document.getElementById('aciklama').value.trim();
+    const tarih = document.getElementById('tarih').value;
+    if(!kisi||!aciklama||!tarih) return;
+    await push(ref(db,'rezillikler'),{kisi,aciklama,tarih});
+    document.getElementById('rezilForm').reset();
     loadData();
+  });
 
-    // --- Unutulmaz Anlar Fonksiyonları ---
-    function formatTarih(dateStr) {
-      const date = new Date(dateStr);
-      const options = { weekday:'long', year:'numeric', month:'long', day:'numeric'};
-      return `${dateStr} ${date.toLocaleDateString('tr-TR', options)}`;
-    }
+  async function loadData(){
+    const snapshot = await get(child(ref(db),'rezillikler'));
+    const veriler = snapshot.exists()?snapshot.val():{};
+    ['Mehmet','Batu','Abdü','Kemal'].forEach(kisi=>{
+      document.getElementById(`liste-${kisi}`).innerHTML='';
+    });
+    const sayac = {Mehmet:0,Batu:0,Abdü:0,Kemal:0};
+    const entries = Object.entries(veriler).sort((a,b)=>b[1].tarih.localeCompare(a[1].tarih));
+    entries.forEach(([key,item])=>{
+      const li = document.createElement('li');
+      li.className="p-3 bg-pink-50 rounded-lg flex justify-between items-start shadow";
+      li.innerHTML=`
+        <div>
+          <div class="font-semibold">${item.aciklama}</div>
+          <div class="text-sm text-gray-500">${formatTarih(item.tarih)}</div>
+        </div>
+        <button class="text-red-500 hover:text-red-700 font-bold">X</button>
+      `;
+      li.querySelector('button').addEventListener('click', async ()=>{
+        await remove(ref(db,`rezillikler/${key}`));
+        loadData();
+      });
+      document.getElementById(`liste-${item.kisi}`).appendChild(li);
+      sayac[item.kisi]++;
+    });
+    const sirali = Object.entries(sayac).sort((a,b)=>b[1]-a[1]);
+    const liderlikUl = document.getElementById('liderlikListesi');
+    liderlikUl.innerHTML='';
+    sirali.forEach(([kisi,sayi])=>{
+      const li=document.createElement('li');
+      li.textContent=`${kisi}: ${sayi} rezillik 😎`;
+      liderlikUl.appendChild(li);
+    });
+  }
 
-    async function loadUnutulmaz(){
-      const snapshot = await get(child(ref(db),'unutulmazlar'));
-      const veriler = snapshot.exists()?snapshot.val():{};
-      const goster = document.getElementById('unutulmazGoster');
-      goster.innerHTML='';
-      const entries = Object.entries(veriler).sort((a,b)=>b[1].tarih.localeCompare(a[1].tarih));
-      entries.forEach(([key, item])=>{
-        const div = document.createElement('div');
-        div.className="p-3 bg-purple-50 rounded-lg flex flex-col shadow cursor-pointer";
-        let contentHTML='';
-        if(item.text) contentHTML+=`<div class="font-semibold mb-1">${item.text}</div>`;
-        if(item.foto) contentHTML+=`<img src="${item.foto}" class="mb-1 max-h-48 rounded-lg" onclick="showLightbox(this.src)"/>`;
-        contentHTML+=`<div class="text-sm text-gray-500">${formatTarih(item.tarih)}</div>`;
-        contentHTML+=`<button class="text-red-500 hover:text-red-700 font-bold mt-2 self-end">X</button>`;
-        div.innerHTML = contentHTML;
-        div.querySelector('button').addEventListener('click', async ()=>{
-          await remove(ref(db,`unutulmazlar/${key}`));
-          loadUnutulmaz();
-        });
-        goster.prepend(div);
+  document.getElementById('tumunuSil').addEventListener('click', async ()=>{
+    if(!confirm('Tüm rezillikler silinsin mi?')) return;
+    await remove(ref(db,'rezillikler'));
+    loadData();
+  });
+
+  loadData();
+
+  // --- Unutulmaz Anlar Fonksiyonları ---
+  async function loadUnutulmaz(){
+    const snapshot = await get(child(ref(db),'unutulmazlar'));
+    const veriler = snapshot.exists()?snapshot.val():{};
+    const goster = document.getElementById('unutulmazGoster');
+    goster.innerHTML='';
+    const entries = Object.entries(veriler).sort((a,b)=>b[1].tarih.localeCompare(a[1].tarih));
+    entries.forEach(([key,item])=>{
+      const div = document.createElement('div');
+      div.className="p-3 bg-purple-50 rounded-lg flex flex-col shadow cursor-pointer";
+      let contentHTML='';
+      if(item.text) contentHTML+=`<div class="font-semibold mb-1">${item.text}</div>`;
+      if(item.medya){
+        if(item.type==='image'){
+          contentHTML+=`<img src="${item.medya}" class="mb-1 max-h-48 rounded-lg" onclick="showLightbox(this.src,'image')"/>`;
+        } else if(item.type==='video'){
+          contentHTML+=`<video src="${item.medya}" class="mb-1 max-h-48 rounded-lg" controls onclick="showLightbox(this.src,'video')"></video>`;
+        }
+      }
+      contentHTML+=`<div class="text-sm text-gray-500">${formatTarih(item.tarih)}</div>`;
+      contentHTML+=`<button class="text-red-500 hover:text-red-700 font-bold mt-2 self-end">X</button>`;
+      div.innerHTML = contentHTML;
+      div.querySelector('button').addEventListener('click', async ()=>{
+        await remove(ref(db,`unutulmazlar/${key}`));
+        loadUnutulmaz();
+      });
+      goster.prepend(div);
+    });
+  }
+
+  document.getElementById('unutulmazForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const text = document.getElementById('unutulmazText').value.trim();
+    const tarih = document.getElementById('unutulmazTarih').value;
+    const fileInput = document.getElementById('unutulmazMedya');
+    if(!tarih) return;
+    let medyaData='', medyaType='';
+    if(fileInput.files.length>0){
+      const file = fileInput.files[0];
+      medyaType = file.type.startsWith('video') ? 'video' : 'image';
+      medyaData = await new Promise(resolve=>{
+        const reader = new FileReader();
+        reader.onload=()=>resolve(reader.result);
+        reader.readAsDataURL(file);
       });
     }
-
-    document.getElementById('unutulmazForm').addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const text = document.getElementById('unutulmazText').value.trim();
-      const tarih = document.getElementById('unutulmazTarih').value;
-      const fotoInput = document.getElementById('unutulmazFoto');
-      if(!tarih) return;
-      let fotoData = '';
-      if(fotoInput.files.length>0){
-        const file = fotoInput.files[0];
-        fotoData = await new Promise(resolve=>{
-          const reader = new FileReader();
-          reader.onload = ()=>resolve(reader.result);
-          reader.readAsDataURL(file);
-        });
-      }
-      await push(ref(db,'unutulmazlar'),{text, tarih, foto: fotoData});
-      document.getElementById('unutulmazForm').reset();
-      loadUnutulmaz();
-    });
-
+    await push(ref(db,'unutulmazlar'),{text, tarih, medya: medyaData, type: medyaType});
+    document.getElementById('unutulmazForm').reset();
     loadUnutulmaz();
+  });
 
-    // --- Lightbox Fonksiyonu ---
-    window.showLightbox = function(src){
-      const lightbox = document.getElementById('lightbox');
-      const img = document.getElementById('lightboxImg');
+  loadUnutulmaz();
+
+  // --- Lightbox ---
+  window.showLightbox = function(src,type){
+    const lightbox = document.getElementById('lightbox');
+    lightbox.innerHTML='';
+    if(type==='image'){
+      const img = document.createElement('img');
       img.src = src;
-      lightbox.style.display='flex';
+      lightbox.appendChild(img);
+    } else if(type==='video'){
+      const video = document.createElement('video');
+      video.src = src;
+      video.controls=true;
+      video.autoplay=true;
+      lightbox.appendChild(video);
     }
-  </script>
+    lightbox.style.display='flex';
+  }
+
+  // --- Emoji düşme efekti ---
+  function emojiDrop(){
+    const emoji = document.createElement('div');
+    emoji.className='emoji';
+    emoji.style.left=Math.random()*window.innerWidth+'px';
+    emoji.textContent='🍌';
+    emoji.style.animationDuration=(2+Math.random()*3)+'s';
+    document.body.appendChild(emoji);
+    setTimeout(()=>emoji.remove(),5000);
+  }
+  setInterval(emojiDrop,500);
+</script>
 </body>
 </html>
