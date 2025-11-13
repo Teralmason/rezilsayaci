@@ -57,6 +57,25 @@
         <ul id="liste-Kemal" class="space-y-2"></ul>
       </div>
     </div>
+
+    <!-- Unutulmaz Anlar Bölümü -->
+    <div class="bg-white rounded-2xl shadow-lg p-5 mt-6">
+      <h2 class="text-xl font-semibold mb-3 text-pink-600">✨ Unutulmaz Anlar ✨</h2>
+
+      <!-- Form -->
+      <form id="unutulmazForm" class="space-y-3 mb-4">
+        <textarea id="unutulmazText" placeholder="nolmus olabilir amg" class="w-full p-3 border rounded-lg" rows="3"></textarea>
+        <input id="unutulmazFoto" type="file" accept="image/*" class="w-full p-3 border rounded-lg"/>
+        <input id="unutulmazTarih" type="date" required class="w-full p-3 border rounded-lg"/>
+        <button class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700">
+          Ekle
+        </button>
+      </form>
+
+      <!-- Unutulmaz Anlar Görüntüleme -->
+      <div id="unutulmazGoster" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
   </div>
 
   <!-- Firebase -->
@@ -64,7 +83,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
     import { getDatabase, ref, push, get, child, remove } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 
-    // --- Firebase Config ---
     const firebaseConfig = {
       apiKey: "AIzaSyCmwFZJM8dD_WPXdkabpHAYzi-MxlCGtRY",
       authDomain: "rezilsayaci.firebaseapp.com",
@@ -79,40 +97,29 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // --- Rezillik Ekle ---
+    // --- Rezillik Fonksiyonları ---
     document.getElementById('rezilForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const kisi = document.getElementById('kisi').value;
       const aciklama = document.getElementById('aciklama').value.trim();
       const tarih = document.getElementById('tarih').value;
-
       if (!kisi || !aciklama || !tarih) return;
-
       await push(ref(db, 'rezillikler'), { kisi, aciklama, tarih });
       document.getElementById('rezilForm').reset();
       loadData();
     });
 
-    // --- Verileri Yükle ---
     async function loadData() {
       const snapshot = await get(child(ref(db), 'rezillikler'));
       const veriler = snapshot.exists() ? snapshot.val() : {};
-
-      // Kişi listelerini temizle
       ['Mehmet','Batu','Abdü','Kemal'].forEach(kisi => {
         document.getElementById(`liste-${kisi}`).innerHTML = '';
       });
-
-      // Sayı saymak için
       const sayac = { Mehmet: 0, Batu: 0, Abdü: 0, Kemal: 0 };
-
-      // Verileri sırala (en yeni üstte)
       const entries = Object.entries(veriler).sort((a,b) => b[1].tarih.localeCompare(a[1].tarih));
-
       entries.forEach(([key, item]) => {
         const li = document.createElement('li');
         li.className = "p-3 bg-pink-50 rounded-lg flex justify-between items-start shadow";
-
         li.innerHTML = `
           <div>
             <div class="font-semibold">${item.aciklama}</div>
@@ -120,17 +127,13 @@
           </div>
           <button class="text-red-500 hover:text-red-700 font-bold">X</button>
         `;
-
         li.querySelector('button').addEventListener('click', async () => {
           await remove(ref(db, `rezillikler/${key}`));
           loadData();
         });
-
         document.getElementById(`liste-${item.kisi}`).appendChild(li);
         sayac[item.kisi]++;
       });
-
-      // Liderlik tablosu
       const sirali = Object.entries(sayac).sort((a,b)=>b[1]-a[1]);
       const liderlikUl = document.getElementById('liderlikListesi');
       liderlikUl.innerHTML = '';
@@ -141,15 +144,65 @@
       });
     }
 
-    // --- Tümünü Sil ---
     document.getElementById('tumunuSil').addEventListener('click', async () => {
       if (!confirm('Tüm rezillikler silinsin mi?')) return;
       await remove(ref(db, 'rezillikler'));
       loadData();
     });
 
-    // İlk yükleme
     loadData();
+
+    // --- Unutulmaz Anlar Fonksiyonları ---
+    function formatTarih(dateStr) {
+      const date = new Date(dateStr);
+      const options = { weekday:'long', year:'numeric', month:'long', day:'numeric'};
+      return `${dateStr} ${date.toLocaleDateString('tr-TR', options)}`;
+    }
+
+    async function loadUnutulmaz(){
+      const snapshot = await get(child(ref(db),'unutulmazlar'));
+      const veriler = snapshot.exists()?snapshot.val():{};
+      const goster = document.getElementById('unutulmazGoster');
+      goster.innerHTML='';
+      const entries = Object.entries(veriler).sort((a,b)=>b[1].tarih.localeCompare(a[1].tarih));
+      entries.forEach(([key, item])=>{
+        const div = document.createElement('div');
+        div.className="p-3 bg-purple-50 rounded-lg flex flex-col shadow";
+        let contentHTML='';
+        if(item.text) contentHTML+=`<div class="font-semibold mb-1">${item.text}</div>`;
+        if(item.foto) contentHTML+=`<img src="${item.foto}" class="mb-1 max-h-48 rounded-lg"/>`;
+        contentHTML+=`<div class="text-sm text-gray-500">${formatTarih(item.tarih)}</div>`;
+        contentHTML+=`<button class="text-red-500 hover:text-red-700 font-bold mt-2 self-end">X</button>`;
+        div.innerHTML = contentHTML;
+        div.querySelector('button').addEventListener('click', async ()=>{
+          await remove(ref(db,`unutulmazlar/${key}`));
+          loadUnutulmaz();
+        });
+        goster.appendChild(div);
+      });
+    }
+
+    document.getElementById('unutulmazForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const text = document.getElementById('unutulmazText').value.trim();
+      const tarih = document.getElementById('unutulmazTarih').value;
+      const fotoInput = document.getElementById('unutulmazFoto');
+      if(!tarih) return;
+      let fotoData = '';
+      if(fotoInput.files.length>0){
+        const file = fotoInput.files[0];
+        fotoData = await new Promise(resolve=>{
+          const reader = new FileReader();
+          reader.onload = ()=>resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      }
+      await push(ref(db,'unutulmazlar'),{text, tarih, foto: fotoData});
+      document.getElementById('unutulmazForm').reset();
+      loadUnutulmaz();
+    });
+
+    loadUnutulmaz();
   </script>
 </body>
 </html>
