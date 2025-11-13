@@ -5,6 +5,25 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Rezil Sayacı</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Lightbox stil */
+    #lightbox {
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 10px;
+    }
+    #lightbox img {
+      max-width: 100%;
+      max-height: 90%;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-red-100 via-pink-100 to-purple-200 min-h-screen text-gray-800">
   <div class="max-w-4xl mx-auto p-4">
@@ -64,7 +83,7 @@
 
       <!-- Form -->
       <form id="unutulmazForm" class="space-y-3 mb-4">
-        <textarea id="unutulmazText" placeholder="nolmus olabilir amg" class="w-full p-3 border rounded-lg" rows="3"></textarea>
+        <textarea id="unutulmazText" placeholder="ne olmus olabilir ag" class="w-full p-3 border rounded-lg" rows="3"></textarea>
         <input id="unutulmazFoto" type="file" accept="image/*" class="w-full p-3 border rounded-lg"/>
         <input id="unutulmazTarih" type="date" required class="w-full p-3 border rounded-lg"/>
         <button class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700">
@@ -75,7 +94,11 @@
       <!-- Unutulmaz Anlar Görüntüleme -->
       <div id="unutulmazGoster" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </div>
+  </div>
 
+  <!-- Lightbox -->
+  <div id="lightbox" class="flex" onclick="this.style.display='none'">
+    <img id="lightboxImg" src=""/>
   </div>
 
   <!-- Firebase -->
@@ -167,10 +190,10 @@
       const entries = Object.entries(veriler).sort((a,b)=>b[1].tarih.localeCompare(a[1].tarih));
       entries.forEach(([key, item])=>{
         const div = document.createElement('div');
-        div.className="p-3 bg-purple-50 rounded-lg flex flex-col shadow";
+        div.className="p-3 bg-purple-50 rounded-lg flex flex-col shadow cursor-pointer";
         let contentHTML='';
         if(item.text) contentHTML+=`<div class="font-semibold mb-1">${item.text}</div>`;
-        if(item.foto) contentHTML+=`<img src="${item.foto}" class="mb-1 max-h-48 rounded-lg"/>`;
+        if(item.foto) contentHTML+=`<img src="${item.foto}" class="mb-1 max-h-48 rounded-lg" onclick="showLightbox(this.src)"/>`;
         contentHTML+=`<div class="text-sm text-gray-500">${formatTarih(item.tarih)}</div>`;
         contentHTML+=`<button class="text-red-500 hover:text-red-700 font-bold mt-2 self-end">X</button>`;
         div.innerHTML = contentHTML;
@@ -178,7 +201,7 @@
           await remove(ref(db,`unutulmazlar/${key}`));
           loadUnutulmaz();
         });
-        goster.appendChild(div);
+        goster.prepend(div);
       });
     }
 
@@ -203,6 +226,14 @@
     });
 
     loadUnutulmaz();
+
+    // --- Lightbox Fonksiyonu ---
+    window.showLightbox = function(src){
+      const lightbox = document.getElementById('lightbox');
+      const img = document.getElementById('lightboxImg');
+      img.src = src;
+      lightbox.style.display='flex';
+    }
   </script>
 </body>
 </html>
